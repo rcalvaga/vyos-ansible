@@ -12,7 +12,7 @@
     vpc_subnet_id: subnet-0264793e
     instance_name: vyos-instance
     private_ip1: 192.168.122.10
-    private_ip2: 192.168.0.1
+    private_ip2: 192.168.0.10
 
   tasks:
     - name: Launch VyOS instance
