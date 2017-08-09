@@ -1,0 +1,55 @@
+- name: Create a sandbox instance
+  hosts: vyos_hosts
+  gather_facts: True
+  connection: local
+
+  vars:
+    keypair: id_rsa_os1_rcalvaga
+    instance_type: t2.micro
+    security_group: ssh-sec-group
+    image: ami-7ee7bc05
+    region: us-east-1
+    vpc_subnet_id: subnet-0264793e
+    instance_name: vyos-instance
+    private_ip1: 192.168.122.10
+    private_ip2: 192.168.0.10
+
+  tasks:
+    - name: Launch instance
+      ec2:
+         assign_public_ip: yes
+         key_name: "{{ keypair }}"
+         group: "{{ security_group }}"
+         instance_type: "{{ instance_type }}"
+         image: "{{ image }}"
+         wait: true
+         region: "{{ region }}"
+         instance_tags:
+             Name: "{{ instance_name }}"
+         exact_count: 1
+         count_tag:
+             Name: "{{ instance_name }}"
+         vpc_subnet_id: "{{ vpc_subnet_id }}"
+         private_ip: "{{ private_ip1 }}" 
+      register: ec2
+    
+#    - debug: var=ec2
+    - set_fact: ec2_id={{ ec2.instance_ids[0] }}
+
+    - name: Add secondary private IP
+      ec2_eni:
+         instance_id: "{{ ec2_id }}"
+         attached: True
+         device_index: 1
+         security_groups: "{{ security_group }}"
+         region: "{{ region }}"
+         private_ip_address:  "{{ private_ip2 }}"
+         subnet_id: subnet-2b1c0117
+         delete_on_termination: true
+         state: present
+
+    - name: Add new instance to host group
+      add_host: hostname={{ ec2.instances[0].public_ip }} groupname=launched
+
+    - name: Wait for SSH to come up
+      wait_for: host={{ ec2.instances[0].public_dns_name }} port=22 delay=60 timeout=320 state=started
