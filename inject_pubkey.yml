@@ -2,9 +2,6 @@
   hosts: localhost
   gather_facts: True
   connection: local
-  become_user: centos
-  become: yes
-  become_method: sudo
   
   tasks:
   - name: Inject PubKey into Local Server 
