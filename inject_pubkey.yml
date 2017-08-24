@@ -2,7 +2,7 @@
   hosts: localhost
   gather_facts: True
   connection: local
-  remote_user: centos
+  become_user: centos
   become: yes
   become_method: sudo
   
