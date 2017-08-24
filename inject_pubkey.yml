@@ -5,7 +5,7 @@
   
   tasks:
   - name: Create authorized_keys file
-    command: touch /var/lib/awx/.ssh/authorized_keys
+    file: path=/root/.ssh/authorized_keys state=touch
     
   - name: Inject PubKey into Local Server 
-    command: echo "{{ pubkey }}" >> /var/lib/awx/.ssh/authorized_keys
+    command: echo "{{ pubkey }}" >> /root/.ssh/authorized_keys
