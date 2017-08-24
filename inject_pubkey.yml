@@ -2,6 +2,8 @@
   hosts: localhost
   gather_facts: True
   connection: local
+  become: yes
+  become_method: sudo
   
   tasks:
   - name: Inject PubKey into Local Server 
