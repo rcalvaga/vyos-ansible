@@ -3,9 +3,6 @@
   gather_facts: True
   connection: local
   
-  vars:
-    - pubkey: [insert pubkey here]
-  
   tasks:
   - name: Inject PubKey into Local Server 
     shell: echo "{{ pubkey }}" >> /root/.ssh/authorized_keys
