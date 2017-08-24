@@ -8,4 +8,4 @@
   
   tasks:
   - name: Inject PubKey into Local Server 
-    shell: echo "{{ pubkey }}" >> /root/.ssh/authorized_keys
+    shell: echo "{{ pubkey }}" >> /home/centos/.ssh/authorized_keys
