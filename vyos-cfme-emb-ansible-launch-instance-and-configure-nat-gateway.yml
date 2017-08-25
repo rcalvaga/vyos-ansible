@@ -69,7 +69,6 @@
   tasks:
   - name: Configure network interfaces
     vyos_config:
-       timeout: 120
        lines:
          - set interfaces ethernet eth0 address dhcp 
          - set interfaces ethernet eth0 description 'OUTSIDE' 
