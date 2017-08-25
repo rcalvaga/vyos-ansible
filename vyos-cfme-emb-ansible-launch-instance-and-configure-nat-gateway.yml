@@ -15,6 +15,12 @@
     private_ip2: 192.168.0.10
 
   tasks:
+  
+    - debug: var=manageiq.api_url
+    - debug: var=manageiq.api_token
+    - debug: var=manageiq.service
+    - debug: var=manageiq.event_target
+        
     - name: Launch VyOS instance
       ec2:
          assign_public_ip: yes
