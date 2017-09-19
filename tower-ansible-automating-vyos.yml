@@ -13,7 +13,7 @@
          - set interfaces ethernet eth1 address '192.168.0.1/24' 
          - set interfaces ethernet eth1 description 'INSIDE'
        save: yes
-    ignore_errors: yes
+#    ignore_errors: yes
 
   - name: Configure Source NAT for our "Inside" network
     vyos_config:
