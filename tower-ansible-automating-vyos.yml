@@ -1,5 +1,7 @@
 - name: Configuring VyOS Host as a NAT Gateway
   hosts: vyos-servers
+  gather_facts: True
+  connection: ssh
   
   tasks:
   - name: Configure network interfaces
