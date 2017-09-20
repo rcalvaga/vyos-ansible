@@ -79,6 +79,6 @@
   - name: Show the Configuration
     vyos_command:
        commands:
-         - show configuration commands
-    register: commands 
-  - debug: var=commands
+         - show configuration
+    register: configuration 
+  - debug: var=configuration
