@@ -75,3 +75,8 @@
          - set interfaces ethernet eth0 firewall in name 'OUTSIDE-IN'
          - set interfaces ethernet eth0 firewall local name 'OUTSIDE-LOCAL'
        save: yes
+       
+  - name: Show the Configuration
+    vyos_command:  
+       commands:
+         - show configuration commands
