@@ -7,20 +7,15 @@
   - name: Configure network interfaces
     vyos_config:
        timeout: 120
-#       provider:
-#           host: "{{ inventory_hostname }}"    
        lines:
          - set interfaces ethernet eth0 address dhcp 
          - set interfaces ethernet eth0 description 'OUTSIDE' 
          - set interfaces ethernet eth1 address '192.168.0.1/24' 
          - set interfaces ethernet eth1 description 'INSIDE'
        save: yes
-#    ignore_errors: yes
 
   - name: Configure Source NAT for our "Inside" network
     vyos_config:
-       provider:
-           host: "{{ inventory_hostname }}"
        lines:
          - set nat source rule 100 outbound-interface 'eth0'
          - set nat source rule 100 source address '192.168.0.0/24' 
@@ -29,8 +24,6 @@
 
   - name: Configure a DHCP Server
     vyos_config:
-       provider:
-           host: "{{ inventory_hostname }}"
        lines:
          - set service dhcp-server disabled 'false' 
          - set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1' 
@@ -42,8 +35,6 @@
 
   - name: And a DNS forwarder
     vyos_config:
-       provider:
-           host: "{{ inventory_hostname }}"
        lines:
          - set service dns forwarding cache-size '0' 
          - set service dns forwarding listen-on 'eth1' 
@@ -53,8 +44,6 @@
 
   - name: Add a set of firewall policies for our "Outside" interface
     vyos_config:
-       provider:
-           host: "{{ inventory_hostname }}"
        lines:
          - set firewall name OUTSIDE-IN default-action 'drop'
          - set firewall name OUTSIDE-IN rule 10 action 'accept'
@@ -82,8 +71,6 @@
 
   - name: Apply the firewall policies
     vyos_config:
-       provider:
-           host: "{{ inventory_hostname }}"
        lines:
          - set interfaces ethernet eth0 firewall in name 'OUTSIDE-IN'
          - set interfaces ethernet eth0 firewall local name 'OUTSIDE-LOCAL'
@@ -91,7 +78,7 @@
 
   - name: Show the Configuration
     vyos_command:
-       provider:
-           host: "{{ inventory_hostname }}"
        commands:
          - show configuration commands
+    register: commands 
+  - debug: var=commands
