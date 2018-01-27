@@ -7,7 +7,8 @@
     keypair: id_rsa_os1_rcalvaga
     instance_type: t2.micro
     security_group: ssh-sec-group
-    image: ami-7ee7bc05
+    #image: ami-7ee7bc05
+    image: ami-92e86ae8
     region: us-east-1
     vpc_subnet_id: subnet-0264793e
     instance_name: vyos-instance
