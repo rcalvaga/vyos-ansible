@@ -23,7 +23,6 @@
     - debug: var=manageiq.api_url
     - debug: var=manageiq.api_token
     - debug: var=manageiq.service
-    - debug: var=manageiq.event_target
         
     - name: Launch VyOS instance
       ec2:
