@@ -13,6 +13,10 @@
     instance_name: vyos-instance
     private_ip1: 192.168.122.10
     private_ip2: 192.168.0.10
+    wait_for_ssh: False
+    provider_id: 2
+    max_retries: 10 
+    retry_interval: 30
 
   tasks:
   
@@ -60,6 +64,96 @@
     - name: Wait for SSH to come up
       wait_for: host={{ ec2.instances[0].public_dns_name }} port=22 delay=60 timeout=320 state=started
 
+    - name: Set the Provider URL
+      set_fact:
+        provider_url: "{{ manageiq.api_url }}/api/providers/{{ provider_id }}"
+
+    - name: Refresh Amazon EC2 provider in CloudForms
+      uri:
+        url: "{{ provider_url }}"
+        method: POST
+        body:
+          action: refresh
+        body_format: json
+        validate_certs: False
+        headers:
+          X-Auth-Token: "{{ manageiq.api_token }}"
+          Content-Type: "application/json" 
+        status_code: 200
+      register: output
+
+    - name: Set the task href
+      set_fact:
+        task_url: "{{ output.json.task_href}}"
+
+    - name: Wait for the provider refresh to end
+      uri:
+        url: "{{ task_url }}"
+        method: GET
+        validate_certs: False
+        headers:
+          X-Auth-Token: "{{ manageiq.api_token }}"
+          Content-Type: "application/json" 
+        status_code: 200
+      register: task_result
+      until: task_result.json.state == 'Finished' or task_result.json.status == 'Error'
+      failed_when: task_result.json.status == 'Error'
+      retries: "{{max_retries}}"
+      delay: "{{retry_interval}}"
+      
+    - name: Lookup instance href
+      uri:
+        url: "{{ manageiq.api_url }}/api/vms?filter[]=name={{ item.id }}&expand=resources"
+        method: GET
+        body:
+          action: refresh
+        body_format: json
+        validate_certs: False
+        headers:
+          X-Auth-Token: "{{ manageiq.api_token }}"
+          Content-Type: "application/json"
+        status_code: 200
+      register: output
+      with_items: 
+        - "{{ ec2.instances }}"
+
+    - name: Set the Service URL
+      set_fact:
+        svc_url: "/api/{{ manageiq.service }}"
+
+    - name: Initialize an empty list for vms
+      set_fact:
+        vms: []
+
+    - name: Append resource href to vms list
+      set_fact:
+        vms: "{{ vms }} + [ { 'href': svc_url, 'resource': { 'href': '/api/vms/{{ item.json.resources[0].id }}' } } ]"
+      with_items: "{{ output.results }}"
+      retries: "{{max_retries}}"
+      delay: "{{retry_interval}}"
+      
+    - debug: var=vms
+
+    - name: Register vms with the service
+      uri:
+        url: "{{ manageiq.api_url }}/api/services"
+        method: POST
+        body_format: json
+        body:
+          action: add_resource
+          resources: "{{ vms }}"
+        validate_certs: False
+        headers:
+          X-Auth-Token: "{{ manageiq.api_token }}"
+          Content-Type: "application/json"
+        status_code: 200
+      register: output
+
+    - debug: var=output.json.results[0].success
+
+    - name: Check if the VM was successfully attached to service
+      fail: msg="{{output.json.results[0].message}}"
+      when: output.json.results[0].success == false
 
 - name: Configuring VyOS Host as a NAT Gateway
   hosts: vyos_launched
