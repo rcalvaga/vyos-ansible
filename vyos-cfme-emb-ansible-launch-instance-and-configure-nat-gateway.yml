@@ -117,6 +117,8 @@
       with_items: 
         - "{{ ec2.instances }}"
 
+    - debug: var=output
+ 
     - name: Set the Service URL
       set_fact:
         svc_url: "/api/{{ manageiq.service }}"
