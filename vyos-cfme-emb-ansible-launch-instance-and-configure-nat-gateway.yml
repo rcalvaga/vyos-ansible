@@ -42,7 +42,8 @@
          private_ip: "{{ private_ip1 }}" 
       register: ec2
     
-#    - debug: var=ec2
+    - debug: var=ec2
+    
     - set_fact: ec2_id={{ ec2.instance_ids[0] }}
 
     - name: Add secondary private IP
