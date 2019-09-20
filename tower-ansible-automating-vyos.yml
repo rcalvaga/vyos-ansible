@@ -8,7 +8,7 @@
     vyos_config:
        timeout: 120
        lines:
-         - set interfaces ethernet eth0 address dhcp 
+         - set interfaces ethernet eth0 address '10.17.48.104/22' 
          - set interfaces ethernet eth0 description 'OUTSIDE' 
          - set interfaces ethernet eth1 address '192.168.0.1/24' 
          - set interfaces ethernet eth1 description 'INSIDE'
