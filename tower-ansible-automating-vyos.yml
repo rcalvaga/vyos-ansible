@@ -6,7 +6,7 @@
   tasks:
   - name: Configure network interfaces
     vyos_config:
-       timeout: 120
+       timeout: 60
        lines:
          - set interfaces ethernet eth0 address '10.17.48.104/22' 
          - set interfaces ethernet eth0 description 'OUTSIDE' 
@@ -16,6 +16,7 @@
 
   - name: Configure Source NAT for our "Inside" network
     vyos_config:
+       timeout: 60
        lines:
          - set nat source rule 100 outbound-interface 'eth0'
          - set nat source rule 100 source address '192.168.0.0/24' 
@@ -24,6 +25,7 @@
 
   - name: Configure a DHCP Server
     vyos_config:
+       timeout: 60
        lines:
          - set service dhcp-server disabled 'false' 
          - set service dhcp-server shared-network-name LAN subnet 192.168.0.0/24 default-router '192.168.0.1' 
@@ -35,6 +37,7 @@
 
   - name: And a DNS forwarder
     vyos_config:
+       timeout: 60
        lines:
          - set service dns forwarding cache-size '0' 
          - set service dns forwarding listen-on 'eth1' 
@@ -44,6 +47,7 @@
 
   - name: Add a set of firewall policies for our "Outside" interface
     vyos_config:
+       timeout: 60
        lines:
          - set firewall name OUTSIDE-IN default-action 'drop'
          - set firewall name OUTSIDE-IN rule 10 action 'accept'
@@ -71,6 +75,7 @@
 
   - name: Apply the firewall policies
     vyos_config:
+       timeout: 60
        lines:
          - set interfaces ethernet eth0 firewall in name 'OUTSIDE-IN'
          - set interfaces ethernet eth0 firewall local name 'OUTSIDE-LOCAL'
