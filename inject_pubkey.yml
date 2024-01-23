@@ -1,11 +1,12 @@
+---
 - name: Inject PubKey into a Local Server
   hosts: localhost
-  gather_facts: True
+  gather_facts: true
   connection: local
-  
+
   tasks:
-  - name: Create authorized_keys file
-    file: path=/root/.ssh/authorized_keys state=touch
-    
-  - name: Inject PubKey into Local Server 
-    command: echo "{{ pubkey }}" >> /root/.ssh/authorized_keys
+    - name: Create authorized_keys file
+      file: path=/root/.ssh/authorized_keys state=touch
+
+    - name: Inject PubKey into Local Server
+      command: echo "{{ pubkey }}" >> /root/.ssh/authorized_keys

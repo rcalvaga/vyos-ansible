@@ -1,6 +1,7 @@
+---
 - name: Create a sandbox instance
   hosts: vyos_hosts
-  gather_facts: True
+  gather_facts: true
   connection: local
 
   vars:
@@ -17,36 +18,36 @@
   tasks:
     - name: Launch instance
       ec2:
-         assign_public_ip: yes
-         key_name: "{{ keypair }}"
-         group: "{{ security_group }}"
-         instance_type: "{{ instance_type }}"
-         image: "{{ image }}"
-         wait: true
-         region: "{{ region }}"
-         instance_tags:
-             Name: "{{ instance_name }}"
-         exact_count: 1
-         count_tag:
-             Name: "{{ instance_name }}"
-         vpc_subnet_id: "{{ vpc_subnet_id }}"
-         private_ip: "{{ private_ip1 }}" 
+        assign_public_ip: true
+        key_name: "{{ keypair }}"
+        group: "{{ security_group }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ image }}"
+        wait: true
+        region: "{{ region }}"
+        instance_tags:
+          Name: "{{ instance_name }}"
+        exact_count: 1
+        count_tag:
+          Name: "{{ instance_name }}"
+        vpc_subnet_id: "{{ vpc_subnet_id }}"
+        private_ip: "{{ private_ip1 }}"
       register: ec2
-    
-#    - debug: var=ec2
+
+    #    - debug: var=ec2
     - set_fact: ec2_id={{ ec2.instance_ids[0] }}
 
     - name: Add secondary private IP
       ec2_eni:
-         instance_id: "{{ ec2_id }}"
-         attached: True
-         device_index: 1
-         security_groups: "{{ security_group }}"
-         region: "{{ region }}"
-         private_ip_address:  "{{ private_ip2 }}"
-         subnet_id: subnet-2b1c0117
-         delete_on_termination: true
-         state: present
+        instance_id: "{{ ec2_id }}"
+        attached: true
+        device_index: 1
+        security_groups: "{{ security_group }}"
+        region: "{{ region }}"
+        private_ip_address: "{{ private_ip2 }}"
+        subnet_id: subnet-2b1c0117
+        delete_on_termination: true
+        state: present
 
     - name: Add new instance to host group
       add_host: hostname={{ ec2.instances[0].public_ip }} groupname=launched
