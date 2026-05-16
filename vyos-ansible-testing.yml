@@ -1,10 +1,10 @@
 - name: Testing VyOS
   hosts: vyos-servers
   gather_facts: True
-  connection: local
+  connection: ansible.netcommon.network_cli
   
   tasks:
   - name: Show the Configuration
-    vyos_command:
+    vyos.vyos.vyos_command:
      commands:
        - show configuration commands
