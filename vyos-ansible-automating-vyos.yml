@@ -7,7 +7,7 @@
   
   tasks:
   - name: Configure network interfaces
-    vyos_config:
+    vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set interfaces ethernet eth0 address '10.17.48.104/22' 
@@ -17,7 +17,7 @@
        save: yes
 
   - name: Configure Source NAT for our "Inside" network
-    vyos_config:
+   vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set nat source rule 100 outbound-interface 'eth0'
@@ -26,7 +26,7 @@
        save: yes
 
   - name: Configure a DHCP Server
-    vyos_config:
+    vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set service dhcp-server disabled 'false' 
@@ -38,7 +38,7 @@
        save: yes
 
   - name: And a DNS forwarder
-    vyos_config:
+    vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set service dns forwarding cache-size '0' 
@@ -48,7 +48,7 @@
        save: yes
 
   - name: Add a set of firewall policies for our "Outside" interface
-    vyos_config:
+    vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set firewall name OUTSIDE-IN default-action 'drop'
@@ -76,7 +76,7 @@
        save: yes
 
   - name: Apply the firewall policies
-    vyos_config:
+    vyos.vyos.vyos_config:
        timeout: 60
        lines:
          - set interfaces ethernet eth0 firewall in name 'OUTSIDE-IN'
@@ -84,6 +84,6 @@
        save: yes
        
   - name: Show the Configuration
-    vyos_command:  
+    vyos.vyos.vyos_command:  
        commands:
          - show configuration commands
