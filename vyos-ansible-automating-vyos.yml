@@ -1,7 +1,9 @@
 - name: Configuring VyOS Host as a NAT Gateway
   hosts: vyos-servers
   gather_facts: True
-  connection: local
+  connection: ansible.netcommon.network_cli
+  vars:
+    ansible_network_os: vyos.vyos.vyos
   
   tasks:
   - name: Configure network interfaces
