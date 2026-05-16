@@ -1,7 +1,6 @@
 - name: Testing VyOS
   hosts: vyos-servers
   gather_facts: True
-  connection: local
 
   tasks:
   - name: Show the Configuration
